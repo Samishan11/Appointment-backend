@@ -9,15 +9,7 @@ const cloudinary = require("../../cloudnary/cloudnary")
 // register user controller
 exports.registerUser = async (req, res) => {
     try {
-      const file =   req.files.image
-        const { username, email, password, checkpassword, phone , image , isAdmin } = req.body;
-        const result = await cloudinary.uploader.upload(file.tempFilePath,{ folder : 'user' ,},function(err,docs){
-            if(err){
-                console.log("error:",err.message)
-            }else{
-                console.log("success",docs)
-            }
-        })
+        const { username, email, password, checkpassword, phone, image, isAdmin } = req.body;
         const userExist = await userModel.findOne({ email });
         if (userExist != null) {
             return res.status(StatusCodes.BAD_REQUEST).send({
@@ -44,10 +36,6 @@ exports.registerUser = async (req, res) => {
                 phone,
                 email,
                 isAdmin,
-                image : {
-                    public_id: result.public_id,
-                    url : result.secure_url
-                },
                 password: has_password,
                 createdOn: new Date().toDateString()
             }).save().then(() => {
@@ -129,6 +117,33 @@ exports.updateUser = async (req, res) => {
         return res.status(StatusCodes.ACCEPTED).send({
             success: true,
             messgae: "Update sucessfully"
+        })
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            success: false,
+            messgae: "INTERNAL_SERVER_ERROR !!"
+        })
+    }
+}
+exports.updateProfile = async (req, res) => {
+    try {
+        const file = req?.files?.image
+        const result = await cloudinary?.uploader?.upload(file?.tempFilePath, { folder: 'user', }, function (err, docs) {
+            if (err) {
+                console.log("error:", err.message)
+            } else {
+                console.log("success", docs)
+            }
+        })
+        var update_ = await userModel.findOneAndUpdate({ _id: req.params.id }, {
+            image: {
+                public_id: result?.public_id,
+                url: result?.secure_url
+            },
+        });
+        return res.status(StatusCodes.ACCEPTED).send({
+            success: true,
+            messgae: "Profile Update Sucessfully"
         })
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({

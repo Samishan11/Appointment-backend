@@ -24,8 +24,15 @@ const appointmentModel = new mongoose.Schema({
         type: String,
     },
     image: {
-        type: String
-    }
+        public_id :{
+            type : String,
+            requried: true,
+        },
+        url: {
+            type: String,
+            required: true,
+        }
+    },
 })
 
 module.exports = new mongoose.model("appointment", appointmentModel);

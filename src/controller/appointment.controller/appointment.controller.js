@@ -1,5 +1,7 @@
 const appointmentModel = require('../../models/appointment.model');
 var { StatusCodes } = require('http-status-codes');
+const cloudinary = require("../../cloudnary/cloudnary");
+
 // appointment add controller 
 exports.appointmentAdd = async (req, res) => {
     try {
@@ -10,8 +12,20 @@ exports.appointmentAdd = async (req, res) => {
             })
         }
         const { appointment_title, appointment_description, appointment_status, appointment_data, appointment_time } = req.body;
+        const file = req?.files?.image
+        const result = await cloudinary?.uploader?.upload(file?.tempFilePath, { folder: 'user', }, function (err, docs) {
+            if (err) {
+                console.log("error:", err.message)
+            } else {
+                console.log("success", docs)
+            }
+        })
         var _appointment = await new appointmentModel({
-            user: req.userInfo._id, appointment_data, appointment_time, appointment_status, appointment_title, appointment_description
+            user: req.userInfo._id, appointment_data, appointment_time, appointment_status, appointment_title, appointment_description,
+            image: {
+                public_id: result.public_id,
+                url: result.secure_url
+            },
         })
         await _appointment.save();
         return res.status(StatusCodes.OK).send({
