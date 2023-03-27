@@ -22,17 +22,20 @@ const userModel = new mongoose.Schema({
         type: String,
         require: false
     },
-    password:{
-        type:String,
-        required:true
+    password: {
+        type: String,
+        required: true
     },
-    createdOn:{
-        type:String,
-        required:true
+    createdOn: {
+        type: String,
+        required: true
+    },
+    isAdmin: {
+        type: Boolean,
     }
 })
 userModel.methods.matchPassword = async function (password) {
     return await bcryptjs.compare(password, this.password);
-  };
-  
+};
+
 module.exports = new mongoose.model("user", userModel);

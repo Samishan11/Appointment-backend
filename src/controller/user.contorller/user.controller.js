@@ -5,7 +5,7 @@ const auth = require("../../middleware/auth")
 const jwt = require("jsonwebtoken")
 var adminAttemptCount = 0, blockEmail;
 
-// 
+// register user controller
 exports.registerUser = async (req, res) => {
     try {
         const { username, email, password, checkpassword, phone } = req.body;
@@ -51,7 +51,8 @@ exports.registerUser = async (req, res) => {
     }
 }
 
-exports.loginUser = async(req,res) => {
+// login user controller
+exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     if (typeof email !== "string" || typeof password !== "string") {
@@ -77,8 +78,8 @@ exports.loginUser = async(req,res) => {
                 })
             }
 
-            const { accessToken, refreshToken } = auth.GenerateJWT({data});
-            const token = jwt.sign({ _id: data._id, username: data.username, email: data.email, isAdmin: data.isAdmin, verified: data.verified },  process.env.ACCESS_TOKEN_KEY)
+            const { accessToken, refreshToken } = auth.GenerateJWT({ data });
+            const token = jwt.sign({ _id: data._id, username: data.username, email: data.email, isAdmin: data.isAdmin, verified: data.verified }, process.env.ACCESS_TOKEN_KEY)
             return res.status(200).send({
                 message: 'Login succesfully.',
                 token: token,
@@ -88,7 +89,7 @@ exports.loginUser = async(req,res) => {
                 isVerified: data.isVerifed
             })
         } else {
-            adminAttemptCount++;
+            adminAttemptCount += 1;
             if (adminAttemptCount === 5) {
                 blockEmail = email;
                 setTimeout(() => {
@@ -102,6 +103,38 @@ exports.loginUser = async(req,res) => {
     } catch (err) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             message: err.message
+        })
+    }
+}
+
+// update user controller 
+exports.updateUser = async (req, res) => {
+    try {
+        var update_ = await userModel.findOneAndUpdate({ _id: req.params.id }, req?.body);
+        res.status(StatusCodes.ACCEPTED).send({
+            success: true,
+            messgae: "Update sucessfully"
+        })
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            success: false,
+            messgae: "INTERNAL_SERVER_ERROR !!"
+        })
+    }
+}
+
+// delete user controller 
+exports.deleteUser = async (req, res) => {
+    try {
+        var delete_ = await userModel.findOneAndDelete({ _id: req.params.id });
+        res.status(StatusCodes.ACCEPTED).send({
+            success: true,
+            messgae: "Delete sucessfully"
+        })
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            success: false,
+            messgae: "INTERNAL_SERVER_ERROR !!"
         })
     }
 }
