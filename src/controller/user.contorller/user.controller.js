@@ -4,11 +4,20 @@ const bcryptjs = require('bcryptjs');
 const auth = require("../../middleware/auth")
 const jwt = require("jsonwebtoken")
 var adminAttemptCount = 0, blockEmail;
+const cloudinary = require("../../cloudnary/cloudnary")
 
 // register user controller
 exports.registerUser = async (req, res) => {
     try {
-        const { username, email, password, checkpassword, phone , isAdmin } = req.body;
+      const file =   req.files.image
+        const { username, email, password, checkpassword, phone , image , isAdmin } = req.body;
+        const result = await cloudinary.uploader.upload(file.tempFilePath,{ folder : 'user' ,},function(err,docs){
+            if(err){
+                console.log("error:",err.message)
+            }else{
+                console.log("success",docs)
+            }
+        })
         const userExist = await userModel.findOne({ email });
         if (userExist != null) {
             return res.status(StatusCodes.BAD_REQUEST).send({
@@ -35,6 +44,10 @@ exports.registerUser = async (req, res) => {
                 phone,
                 email,
                 isAdmin,
+                image : {
+                    public_id: result.public_id,
+                    url : result.secure_url
+                },
                 password: has_password,
                 createdOn: new Date().toDateString()
             }).save().then(() => {
@@ -45,6 +58,7 @@ exports.registerUser = async (req, res) => {
             })
         })
     } catch (error) {
+        console.log(error)
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             success: false,
             message: "Something went wrong!!"

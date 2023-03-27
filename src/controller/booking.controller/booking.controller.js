@@ -58,3 +58,19 @@ exports.bookingDelete = async (req, res) => {
         })
     }
 }
+
+// appointment booking get
+exports.bookingGet = async (req, res) => {
+    try {
+        var _get = await booking.find();
+        return res.status(StatusCodes.OK).send({
+            success: true,
+            data: _get
+        })
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            success: false,
+            message: "INTERNAL_SERVER_ERROR !!"
+        })
+    }
+}

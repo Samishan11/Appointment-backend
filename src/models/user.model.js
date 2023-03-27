@@ -18,9 +18,15 @@ const userModel = new mongoose.Schema({
     phone: {
         type: String
     },
-    profile_pic: {
-        type: String,
-        require: false
+    image: {
+        public_id :{
+            type : String,
+            requried: true,
+        },
+        url: {
+            type: String,
+            required: true,
+        }
     },
     password: {
         type: String,
