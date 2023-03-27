@@ -138,3 +138,18 @@ exports.deleteUser = async (req, res) => {
         })
     }
 }
+// get user controller 
+exports.getUsers = async (req, res) => {
+    try {
+        var get = await userModel.find();
+        res.status(StatusCodes.ACCEPTED).send({
+            success: true,
+            data: get
+        })
+    } catch (error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            success: false,
+            messgae: "INTERNAL_SERVER_ERROR !!"
+        })
+    }
+}
