@@ -12,7 +12,6 @@ const appointmentModel = new mongoose.Schema({
     },
     appointment_description: {
         type: String,
-        required: true
     },
     appointment_status: {
         type: Boolean,
@@ -20,11 +19,9 @@ const appointmentModel = new mongoose.Schema({
     },
     appointment_date: {
         type: String,
-        required: true
     },
     appointment_time: {
         type: String,
-        required: true
     },
     image: {
         type: String

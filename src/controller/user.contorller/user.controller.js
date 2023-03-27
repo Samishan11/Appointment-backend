@@ -8,7 +8,7 @@ var adminAttemptCount = 0, blockEmail;
 // register user controller
 exports.registerUser = async (req, res) => {
     try {
-        const { username, email, password, checkpassword, phone } = req.body;
+        const { username, email, password, checkpassword, phone , isAdmin } = req.body;
         const userExist = await userModel.findOne({ email });
         if (userExist != null) {
             return res.status(StatusCodes.BAD_REQUEST).send({
@@ -34,6 +34,7 @@ exports.registerUser = async (req, res) => {
                 username,
                 phone,
                 email,
+                isAdmin,
                 password: has_password,
                 createdOn: new Date().toDateString()
             }).save().then(() => {
@@ -44,7 +45,7 @@ exports.registerUser = async (req, res) => {
             })
         })
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             success: false,
             message: "Something went wrong!!"
         })
@@ -111,12 +112,12 @@ exports.loginUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         var update_ = await userModel.findOneAndUpdate({ _id: req.params.id }, req?.body);
-        res.status(StatusCodes.ACCEPTED).send({
+        return res.status(StatusCodes.ACCEPTED).send({
             success: true,
             messgae: "Update sucessfully"
         })
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             success: false,
             messgae: "INTERNAL_SERVER_ERROR !!"
         })
@@ -127,12 +128,12 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         var delete_ = await userModel.findOneAndDelete({ _id: req.params.id });
-        res.status(StatusCodes.ACCEPTED).send({
+        return res.status(StatusCodes.ACCEPTED).send({
             success: true,
             messgae: "Delete sucessfully"
         })
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             success: false,
             messgae: "INTERNAL_SERVER_ERROR !!"
         })
@@ -142,12 +143,12 @@ exports.deleteUser = async (req, res) => {
 exports.getUsers = async (req, res) => {
     try {
         var get = await userModel.find();
-        res.status(StatusCodes.ACCEPTED).send({
+        return res.status(StatusCodes.ACCEPTED).send({
             success: true,
             data: get
         })
     } catch (error) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             success: false,
             messgae: "INTERNAL_SERVER_ERROR !!"
         })
