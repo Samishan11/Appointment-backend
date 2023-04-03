@@ -46,7 +46,7 @@ exports.registerUser = async (req, res) => {
             })
         })
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             success: false,
             message: "Something went wrong!!"
@@ -101,7 +101,7 @@ exports.loginUser = async (req, res) => {
                     console.log(`${email} you can login. => ${adminAttemptCount}`);
                 }, 300000);
             }
-            return res.status(StatusCodes.UNAUTHORIZED).send('Wrong email or password !!');
+            return res.status(StatusCodes.BAD_REQUEST).send('Wrong email or password !!');
         }
     } catch (err) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
@@ -113,6 +113,7 @@ exports.loginUser = async (req, res) => {
 // update user controller 
 exports.updateUser = async (req, res) => {
     try {
+        console.log(req?.body)
         var update_ = await userModel.findOneAndUpdate({ _id: req.params.id }, req?.body);
         return res.status(StatusCodes.ACCEPTED).send({
             success: true,
@@ -128,6 +129,7 @@ exports.updateUser = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const file = req?.files?.image
+        console.log(file)
         const result = await cloudinary?.uploader?.upload(file?.tempFilePath, { folder: 'user', }, function (err, docs) {
             if (err) {
                 console.log("error:", err.message)
@@ -140,10 +142,11 @@ exports.updateProfile = async (req, res) => {
                 public_id: result?.public_id,
                 url: result?.secure_url
             },
-        });
+        },{new:true});
         return res.status(StatusCodes.ACCEPTED).send({
             success: true,
-            messgae: "Profile Update Sucessfully"
+            messgae: "Profile Update Sucessfully",
+            data:update_
         })
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({

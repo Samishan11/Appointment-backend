@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const userModel = require("../models/user.model")
 const ACCESS_TOKEN_KEY = process.env.ACCESS_TOKEN_KEY
 const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY
-
 const VerifyJWT = async (req, res, next) => {
   if (req.header('authorization') === undefined || req.header('authorization').length <= 9) {
     return res.status(401).send({
@@ -10,12 +9,13 @@ const VerifyJWT = async (req, res, next) => {
     });
   }
   var accessToken = req.header('authorization')
-
+console.log(accessToken)
   accessToken = accessToken.substr(7, accessToken.length);
 
   try {
     const _res = jwt?.verify(accessToken, ACCESS_TOKEN_KEY)
-    userModel.findOne({ _id: _res?.data?._id }).then(function (result) {
+    userModel.findOne({ _id: _res?._id }).then(function (result) {
+      console.log(result)
       req.userInfo = result;
       next();
     })

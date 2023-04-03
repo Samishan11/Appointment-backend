@@ -4,19 +4,24 @@ const { StatusCodes } = require("http-status-codes");
 // appointment booking 
 exports.booking = async (req, res) => {
     try {
-        const { appointment, booked_on } = req.body;
+        const { appointment, username, email, booked_on } = req.body;
+        console.log(req.body)
         const _booking = await new booking({
             appointment,
             user: req.userInfo._id,
-            booked_on
+            booked_on,
+            username,
+            email
         })
         await _booking.save()
 
         return res.status(StatusCodes.OK).send({
             success: true,
-            message: "Appointment has been booked"
+            message: "Appointment has been booked",
+            data:_booking
         })
     } catch (error) {
+        // console.log(error)
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             success: false,
             message: "INTERNAL_SERVER_ERROR !!"

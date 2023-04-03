@@ -11,7 +11,7 @@ exports.appointmentAdd = async (req, res) => {
                 message: "Unauthorized Access"
             })
         }
-        const { appointment_title, appointment_description, appointment_status, appointment_data, appointment_time } = req.body;
+        const { title, description, status, date, time ,time_end } = req.body;
         const file = req?.files?.image
         const result = await cloudinary?.uploader?.upload(file?.tempFilePath, { folder: 'user', }, function (err, docs) {
             if (err) {
@@ -21,7 +21,7 @@ exports.appointmentAdd = async (req, res) => {
             }
         })
         var _appointment = await new appointmentModel({
-            user: req.userInfo._id, appointment_data, appointment_time, appointment_status, appointment_title, appointment_description,
+            user: req.userInfo._id, title, description, status, date, time, time_end,
             image: {
                 public_id: result.public_id,
                 url: result.secure_url
@@ -30,7 +30,8 @@ exports.appointmentAdd = async (req, res) => {
         await _appointment.save();
         return res.status(StatusCodes.OK).send({
             success: true,
-            message: "Appointment has been added"
+            message: "Appointment has been added",
+            data: _appointment
         })
     } catch (error) {
         console.log(error)
@@ -43,19 +44,36 @@ exports.appointmentAdd = async (req, res) => {
 // appointment update controller 
 exports.appointmentUpdate = async (req, res) => {
     try {
-        const { appointment_title, appointment_description, appointment_status, appointment_data, appointment_time } = req.body;
+        var find = await appointmentModel.findOne({ _id: req.params.id });
+        console.log(find)
+        const file = req?.files?.image
+        const result = await cloudinary?.uploader?.upload(file?file?.tempFilePath:find.image.url, { folder: 'user', }, function (err, docs) {
+            if (err) {
+                console.log("error:", err)
+            } else {
+                console.log("success", docs)
+            }
+        })
         if (!req.userInfo.isAdmin) {
             return res.status(StatusCodes.UNAUTHORIZED).send({
                 success: false,
-                message: "Unauthorized Access"
+                message: "Unauthorized Access",
             })
         }
-        var _appointmentUpdate = await appointmentModel.findOneAndUpdate({ _id: req.params.id }, req?.body)
+        var _appointmentUpdate = await appointmentModel.findOneAndUpdate({ _id: req.params.id }, {
+            title: req?.body?.title, description: req?.body?.description, status: req?.body?.status, date: req?.body?.date, time: req?.body?.time,
+            image: {
+                public_id: result?.public_id,
+                url: result?.secure_url
+            },
+        })
         return res.status(StatusCodes.OK).send({
             success: true,
-            message: "Appointment has been updated"
+            message: "Appointment has been updated",
+            data:_appointmentUpdate
         })
     } catch (error) {
+        console.log(error)
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             success: false,
             message: "Intername server error !!"
@@ -78,6 +96,7 @@ exports.appointmentDelete = async (req, res) => {
             message: "Appointment has been deleted"
         })
     } catch (error) {
+        console.log(error)
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             success: false,
             message: "Intername server error !!"
@@ -92,6 +111,21 @@ exports.appointmentGet = async (req, res) => {
         return res.status(StatusCodes.OK).send({
             success: true,
             data: _appointmentGEt
+        })
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
+            success: false,
+            message: "Intername server error !!"
+        })
+    }
+}
+// single appointment get contrller 
+exports.appointmentSingleGet = async (req, res) => {
+    try {
+        var _appointmentGet = await appointmentModel.findOne({_id:req.params.id});
+        return res.status(StatusCodes.OK).send({
+            success: true,
+            data: _appointmentGet
         })
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({

@@ -21,11 +21,9 @@ const userModel = new mongoose.Schema({
     image: {
         public_id :{
             type : String,
-            requried: true,
         },
         url: {
             type: String,
-            required: true,
         }
     },
     password: {
@@ -38,6 +36,7 @@ const userModel = new mongoose.Schema({
     },
     isAdmin: {
         type: Boolean,
+        default:true
     }
 })
 userModel.methods.matchPassword = async function (password) {

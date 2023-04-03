@@ -4,33 +4,32 @@ const appointmentModel = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",
-        require: true
     },
-    appointment_title: {
-        type: String,
-        required: true
-    },
-    appointment_description: {
+    title: {
         type: String,
     },
-    appointment_status: {
+    description: {
+        type: String,
+    },
+    status: {
         type: Boolean,
         default: false
     },
-    appointment_date: {
+    date: {
         type: String,
     },
-    appointment_time: {
+    time: {
+        type: String,
+    },
+    time_end: {
         type: String,
     },
     image: {
         public_id :{
-            type : String,
-            requried: true,
+            type : String
         },
         url: {
-            type: String,
-            required: true,
+            type: String
         }
     },
 })
