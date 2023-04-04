@@ -8,7 +8,6 @@ exports.booking = async (req, res) => {
         console.log(req.body)
         const _booking = await new booking({
             appointment,
-            user: req.userInfo._id,
             booked_on,
             username,
             email
@@ -21,7 +20,7 @@ exports.booking = async (req, res) => {
             data:_booking
         })
     } catch (error) {
-        // console.log(error)
+        console.log(error)
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
             success: false,
             message: "INTERNAL_SERVER_ERROR !!"
