@@ -20,7 +20,7 @@ console.log(accessToken)
       next();
     })
   } catch (error) {
-    return res.status(500).send({message:error.message})
+    return res.status(500).send({message:"Something went wrong!!"})
   }
 }
 
