@@ -11,7 +11,8 @@ exports.appointmentAdd = async (req, res) => {
                 message: "Unauthorized Access"
             })
         }
-        const { title, description, status, date, time ,time_end , doctor , subspecialities ,  } = req.body;
+        const { title, description, status, date, time ,time_end , doctor , subspecialities  } = req.body;
+        console.log(req.body)
         const file = req?.files?.image
         const result = await cloudinary?.uploader?.upload(file?.tempFilePath, { folder: 'user', }, function (err, docs) {
             if (err) {
@@ -25,7 +26,7 @@ exports.appointmentAdd = async (req, res) => {
             image: {
                 public_id: result.public_id,
                 url: result.secure_url
-            },
+            }
         })
         await _appointment.save();
         return res.status(StatusCodes.OK).send({

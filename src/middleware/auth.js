@@ -9,13 +9,11 @@ const VerifyJWT = async (req, res, next) => {
     });
   }
   var accessToken = req.header('authorization')
-console.log(accessToken)
   accessToken = accessToken.substr(7, accessToken.length);
 
   try {
     const _res = jwt?.verify(accessToken, ACCESS_TOKEN_KEY)
     userModel.findOne({ _id: _res?._id }).then(function (result) {
-      console.log(result)
       req.userInfo = result;
       next();
     })
