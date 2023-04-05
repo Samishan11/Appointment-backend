@@ -1,7 +1,7 @@
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { mail } = require('../../utils/mail');
-
+const { StatusCodes } = require('http-status-codes');
 exports.zoomLink = async (req, res) => {
     const ZOOM_API_KEY = process.env.ZOOM_API_KEY;
     const ZOOM_API_SECRET = process.env.ZOOM_API_SECRET;
@@ -30,7 +30,7 @@ exports.zoomLink = async (req, res) => {
         );
 
         const meetingLink = response.data.join_url;
-        if(meetingLink){
+        if (meetingLink) {
             mail().sendMail({
                 from: process.env.HOST,
                 to: email,
@@ -38,10 +38,9 @@ exports.zoomLink = async (req, res) => {
                 html: ` <p style="text-align:center; font-size:16px;"> Your meeting link: </p><p style="font-size:16px; text-align:justify;">${meetingLink}</p><p style="text-align:justify; font-size:16px;"></p>`
             });
         }
-        res.json({ meetingLink });
+        res.status(StatusCodes.CREATED).send({ data: meetingLink, success: true });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error creating Zoom meeting' });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: 'Error creating Zoom meeting' });
     }
 };
 
