@@ -11,7 +11,7 @@ exports.appointmentAdd = async (req, res) => {
                 message: "Unauthorized Access"
             })
         }
-        const { title, description, status, date, time ,time_end , doctor , subspecialities  } = req.body;
+        const { title, description, status, date, time, time_end, doctor, subspecialities } = req.body;
         console.log(req.body)
         const file = req?.files?.image
         const result = await cloudinary?.uploader?.upload(file?.tempFilePath, { folder: 'user', }, function (err, docs) {
@@ -22,7 +22,7 @@ exports.appointmentAdd = async (req, res) => {
             }
         })
         var _appointment = await new appointmentModel({
-            user: req.userInfo._id, title, description, status, date, time, time_end, doctor , subspecialities,
+            user: req.userInfo._id, title, description, status, date, time, time_end, doctor, subspecialities,
             image: {
                 public_id: result.public_id,
                 url: result.secure_url
@@ -46,13 +46,12 @@ exports.appointmentAdd = async (req, res) => {
 exports.appointmentUpdate = async (req, res) => {
     try {
         var find = await appointmentModel.findOne({ _id: req.params.id });
-        console.log(find)
         const file = req?.files?.image
-        const result = await cloudinary?.uploader?.upload(file?file?.tempFilePath:find.image.url, { folder: 'user', }, function (err, docs) {
+        const result = await cloudinary?.uploader?.upload(file ? file?.tempFilePath : find.image.url, { folder: 'user', }, function (err, docs) {
             if (err) {
                 console.log("error:", err)
             } else {
-                console.log("success", docs)
+                // console.log("success", docs)
             }
         })
         if (!req.userInfo.isAdmin) {
@@ -63,15 +62,17 @@ exports.appointmentUpdate = async (req, res) => {
         }
         var _appointmentUpdate = await appointmentModel.findOneAndUpdate({ _id: req.params.id }, {
             title: req?.body?.title, description: req?.body?.description, status: req?.body?.status, date: req?.body?.date, time: req?.body?.time,
+            doctor:req?.body?.doctor , subspecialities:req?.body?.subspecialities,
             image: {
                 public_id: result?.public_id,
                 url: result?.secure_url
             },
-        })
+        }, { new: true })
+        console.log(_appointmentUpdate)
         return res.status(StatusCodes.OK).send({
             success: true,
             message: "Appointment has been updated",
-            data:_appointmentUpdate
+            data: _appointmentUpdate
         })
     } catch (error) {
         console.log(error)
@@ -123,7 +124,7 @@ exports.appointmentGet = async (req, res) => {
 // single appointment get contrller 
 exports.appointmentSingleGet = async (req, res) => {
     try {
-        var _appointmentGet = await appointmentModel.findOne({_id:req.params.id});
+        var _appointmentGet = await appointmentModel.findOne({ _id: req.params.id });
         return res.status(StatusCodes.OK).send({
             success: true,
             data: _appointmentGet
