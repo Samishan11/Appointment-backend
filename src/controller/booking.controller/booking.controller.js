@@ -1,10 +1,11 @@
 const booking = require('../../models/booking.model');
 const { StatusCodes } = require("http-status-codes");
-
+const appointmentModel = require('../../models/appointment.model')
 // appointment booking 
 exports.booking = async (req, res) => {
     try {
         const { appointment, username, email, booked_on } = req.body;
+        const _appointment = await appointmentModel.findOne({ _id: appointment })
         console.log(req.body)
         const _booking = await new booking({
             appointment,
@@ -12,12 +13,15 @@ exports.booking = async (req, res) => {
             username,
             email
         })
+        if (_booking) {
+           _appointment.isBooked = true;
+        }
         await _booking.save()
-
+        await appointment.save()
         return res.status(StatusCodes.OK).send({
             success: true,
             message: "Appointment has been booked",
-            data:_booking
+            data: _booking
         })
     } catch (error) {
         console.log(error)

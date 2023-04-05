@@ -8,10 +8,25 @@ const appointmentModel = new mongoose.Schema({
     title: {
         type: String,
     },
+    doctor: {
+        type: String
+    },
     description: {
         type: String,
     },
-    status: {
+    contact: {
+        type: String
+    },
+    email: {
+        type: String
+    },
+    location: {
+        type: String
+    },
+    subspecialities: {
+        type: String
+    },
+    isBooked: {
         type: Boolean,
         default: false
     },
@@ -25,8 +40,8 @@ const appointmentModel = new mongoose.Schema({
         type: String,
     },
     image: {
-        public_id :{
-            type : String
+        public_id: {
+            type: String
         },
         url: {
             type: String
