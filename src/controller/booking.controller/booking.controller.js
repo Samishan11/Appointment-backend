@@ -7,17 +7,18 @@ exports.booking = async (req, res) => {
         const { appointment, username, email, booked_on } = req.body;
         const _appointment = await appointmentModel.findOne({ _id: appointment })
         console.log(req.body)
+        console.log(req.body)
         const _booking = await new booking({
             appointment,
-            booked_on,
+            booked_on: new Date(),
             username,
             email
         })
         if (_booking) {
-           _appointment.isBooked = true;
+            _appointment.isBooked = true;
         }
         await _booking.save()
-        await appointment.save()
+        await _appointment.save()
         return res.status(StatusCodes.OK).send({
             success: true,
             message: "Appointment has been booked",
