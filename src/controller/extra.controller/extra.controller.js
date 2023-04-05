@@ -1,11 +1,13 @@
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
+const { mail } = require('../../utils/mail');
 
 exports.zoomLink = async (req, res) => {
     const ZOOM_API_KEY = process.env.ZOOM_API_KEY;
     const ZOOM_API_SECRET = process.env.ZOOM_API_SECRET;
     const MEETING_TOPIC = 'Meeting';
     const MEETING_PASSWORD = '123456';
+    const email = req.body.email
     try {
         const payload = {
             iss: ZOOM_API_KEY,
@@ -28,6 +30,14 @@ exports.zoomLink = async (req, res) => {
         );
 
         const meetingLink = response.data.join_url;
+        if(meetingLink){
+            mail().sendMail({
+                from: process.env.HOST,
+                to: email,
+                subject: "Appointment Meeting Link",
+                html: ` <p style="text-align:center; font-size:16px;"> Your meeting link: </p><p style="font-size:16px; text-align:justify;">${meetingLink}</p><p style="text-align:justify; font-size:16px;"></p>`
+            });
+        }
         res.json({ meetingLink });
     } catch (error) {
         console.error(error);
