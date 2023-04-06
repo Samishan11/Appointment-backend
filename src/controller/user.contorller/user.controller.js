@@ -4,13 +4,14 @@ const bcryptjs = require('bcryptjs');
 const auth = require("../../middleware/auth")
 const jwt = require("jsonwebtoken")
 var adminAttemptCount = 0, blockEmail;
-const cloudinary = require("../../cloudnary/cloudnary")
-
+const cloudinary = require("../../cloudnary/cloudnary");
+const { mail } = require("../../utils/mail")
 // register user controller
 exports.registerUser = async (req, res) => {
     try {
-        const { username, email, password, checkpassword, phone, image, isAdmin } = req.body;
+        const { username, email, password, checkpassword, phone, image, isAdmin, isDoctor } = req.body;
         const userExist = await userModel.findOne({ email });
+        console.log(req.body)
         if (userExist != null) {
             return res.status(StatusCodes.BAD_REQUEST).send({
                 success: false,
@@ -36,10 +37,27 @@ exports.registerUser = async (req, res) => {
                 phone,
                 email,
                 isAdmin,
+                isDoctor,
                 password: has_password,
                 createdOn: new Date().toDateString()
-            }).save().then(() => {
-                return res.status(StatusCodes.CREATED).send('User created succesfully');
+            }).save().then((data) => {
+                if (isDoctor || isAdmin) {
+                    mail().sendMail({
+                        from: process.env.HOST,
+                        to: email,
+                        subject: "Login Credentials",
+                        html: ` <p style=" font-size:16px;"> 
+                        Email: </p><p style="">${email}</p>
+                        </p>
+                        <p style="font-size:16px "> Password:${password}</p>
+                        <p style="text-align:justify; font-size:16px;"></p>`
+                    });
+                }
+                return res.status(StatusCodes.CREATED).send({
+                    message: 'User created succesfully',
+                    success: true,
+                    data: data
+                });
             }).catch((err) => {
                 console.log(err.message)
                 return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('500 SERVER ERROR!!');
@@ -82,13 +100,14 @@ exports.loginUser = async (req, res) => {
             }
 
             const { accessToken, refreshToken } = auth.GenerateJWT({ data });
-            const token = jwt.sign({ _id: data._id, username: data.username, email: data.email, isAdmin: data.isAdmin, verified: data.verified }, process.env.ACCESS_TOKEN_KEY)
+            const token = jwt.sign({ _id: data._id, username: data.username, email: data.email, isAdmin: data.isAdmin, isDoctor: data.isDoctor }, process.env.ACCESS_TOKEN_KEY)
             return res.status(200).send({
                 message: 'Login succesfully.',
                 token: token,
                 accessToken: accessToken,
                 refreshToken: refreshToken,
                 isAdmin: data.isAdmin,
+                isDoctor: data.isDoctor,
                 isVerified: data.isVerifed
             })
         } else {
@@ -114,10 +133,11 @@ exports.loginUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         console.log(req?.body)
-        var update_ = await userModel.findOneAndUpdate({ _id: req.params.id }, req?.body);
+        var update_ = await userModel.findOneAndUpdate({ _id: req.params.id }, req?.body, { new: true });
         return res.status(StatusCodes.ACCEPTED).send({
             success: true,
-            messgae: "Update sucessfully"
+            messgae: "Update sucessfully",
+            data:update_
         })
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
@@ -142,11 +162,11 @@ exports.updateProfile = async (req, res) => {
                 public_id: result?.public_id,
                 url: result?.secure_url
             },
-        },{new:true});
+        }, { new: true });
         return res.status(StatusCodes.ACCEPTED).send({
             success: true,
             messgae: "Profile Update Sucessfully",
-            data:update_
+            data: update_
         })
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({

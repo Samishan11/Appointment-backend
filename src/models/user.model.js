@@ -9,18 +9,14 @@ const userModel = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "Please enter your email"],
-        unique: true,
-        match: [
-            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-            "Please enter a valid email address",
-        ],
+        unique: true
     },
     phone: {
         type: String
     },
     image: {
-        public_id :{
-            type : String,
+        public_id: {
+            type: String,
         },
         url: {
             type: String,
@@ -36,7 +32,11 @@ const userModel = new mongoose.Schema({
     },
     isAdmin: {
         type: Boolean,
-        default:true
+        default: false
+    },
+    isDoctor: {
+        type: Boolean,
+        default: false
     }
 })
 userModel.methods.matchPassword = async function (password) {
