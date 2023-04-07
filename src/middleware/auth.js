@@ -1,56 +1,58 @@
-const jwt = require('jsonwebtoken');
-const userModel = require("../models/user.model")
-const ACCESS_TOKEN_KEY = process.env.ACCESS_TOKEN_KEY
-const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY
+const jwt = require("jsonwebtoken");
+const userModel = require("../models/user.model");
+const ACCESS_TOKEN_KEY = process.env.ACCESS_TOKEN_KEY;
+const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY;
 const VerifyJWT = async (req, res, next) => {
-  if (req.header('authorization') === undefined || req.header('authorization').length <= 9) {
+  if (
+    req.header("authorization") === undefined ||
+    req.header("authorization").length <= 9
+  ) {
     return res.status(401).send({
-      message: "Token is empty !!"
+      message: "Token is empty !!",
     });
   }
-  var accessToken = req.header('authorization')
+  var accessToken = req.header("authorization");
   accessToken = accessToken.substr(7, accessToken.length);
 
   try {
-    const _res = jwt?.verify(accessToken, ACCESS_TOKEN_KEY)
+    const _res = jwt?.verify(accessToken, ACCESS_TOKEN_KEY);
     userModel.findOne({ _id: _res?._id }).then(function (result) {
       req.userInfo = result;
       next();
-    })
+    });
   } catch (error) {
-    return res.status(500).send({message:"Something went wrong!!"})
+    return res.status(500).send({ message: "Something went wrong!!" });
   }
-}
+};
 
 const GenerateJWT = (data) => {
   const accessToken = jwt.sign(data, ACCESS_TOKEN_KEY, {
-    expiresIn: "24h"
-  })
-  const refreshToken = jwt.sign(data, REFRESH_TOKEN_KEY)
+    expiresIn: "24h",
+  });
+  const refreshToken = jwt.sign(data, REFRESH_TOKEN_KEY);
 
   return {
     accessToken: accessToken,
-    refreshToken: refreshToken
-  }
-}
-
+    refreshToken: refreshToken,
+  };
+};
 
 const regenerateAccessToken = (req, res, next) => {
-  var refreshToken = req.header("authorization")
+  var refreshToken = req.header("authorization");
   refreshToken = refreshToken.substr(14, refreshToken.length);
 
   try {
     const response = jwt.verify(refreshToken, REFRESH_TOKEN_KEY);
 
-    req.body.uid = response.id
+    req.body.uid = response.id;
 
-    next()
+    next();
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(401).send({
-      message: "Refresh token cannot verified."
-    })
+      message: "Refresh token cannot verified.",
+    });
   }
-}
+};
 
-module.exports = { VerifyJWT, GenerateJWT, regenerateAccessToken }
+module.exports = { VerifyJWT, GenerateJWT, regenerateAccessToken };
