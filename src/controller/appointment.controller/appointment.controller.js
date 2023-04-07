@@ -20,6 +20,7 @@ exports.appointmentAdd = async (req, res) => {
       time_end,
       doctor,
       subspecialities,
+      uuid,
     } = req.body;
     console.log(req.body);
     const file = req?.files?.image;
@@ -93,7 +94,7 @@ exports.appointmentUpdate = async (req, res) => {
         status: req?.body?.status,
         date: req?.body?.date,
         time: req?.body?.time,
-        time_end: req.body.time_end,
+        time_end: req?.body?.time_end,
         doctor: req?.body?.doctor,
         subspecialities: req?.body?.subspecialities,
         image: {

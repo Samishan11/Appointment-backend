@@ -37,10 +37,11 @@ exports.zoomLink = async (req, res) => {
       const booking_ = await booking.findByIdAndUpdate(
         req.params.id,
         {
-          meeting: meetingLink,
+          meetingLink: meetingLink,
         },
         { new: true }
       );
+      console.log(req.params, req.body);
       mail().sendMail({
         from: process.env.HOST,
         to: email,
