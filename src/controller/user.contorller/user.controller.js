@@ -191,7 +191,6 @@ exports.updateUser = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const file = req?.files?.image;
-    console.log(file);
     const result = await cloudinary?.uploader?.upload(
       file?.tempFilePath,
       { folder: "user" },
@@ -199,12 +198,12 @@ exports.updateProfile = async (req, res) => {
         if (err) {
           console.log("error:", err.message);
         } else {
-          console.log("success", docs);
+          // console.log("success", docs);
         }
       }
     );
-    var update_ = await userModel.findOneAndUpdate(
-      { _id: req.params.id },
+    var update_ = await userModel.findByIdAndUpdate(
+      req.params.id,
       {
         image: {
           public_id: result?.public_id,
@@ -213,12 +212,15 @@ exports.updateProfile = async (req, res) => {
       },
       { new: true }
     );
+    console.log(req.body.id);
+    console.log(update_);
     return res.status(StatusCodes.ACCEPTED).send({
       success: true,
       messgae: "Profile Update Sucessfully",
       data: update_,
     });
   } catch (error) {
+    console.log(error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       success: false,
       messgae: "INTERNAL_SERVER_ERROR !!",

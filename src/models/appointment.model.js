@@ -14,21 +14,6 @@ const appointmentModel = new mongoose.Schema({
   uuid: {
     type: String,
   },
-  description: {
-    type: String,
-  },
-  contact: {
-    type: String,
-  },
-  email: {
-    type: String,
-  },
-  location: {
-    type: String,
-  },
-  subspecialities: {
-    type: String,
-  },
   isBooked: {
     type: Boolean,
     default: false,
