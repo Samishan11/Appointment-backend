@@ -170,7 +170,6 @@ exports.loginUser = async (req, res) => {
 // update user controller
 exports.updateUser = async (req, res) => {
   try {
-    console.log(req?.body);
     var update_ = await userModel.findOneAndUpdate(
       { _id: req.params.id },
       req?.body,
@@ -182,6 +181,7 @@ exports.updateUser = async (req, res) => {
       data: update_,
     });
   } catch (error) {
+    console.log(error);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       success: false,
       messgae: "INTERNAL_SERVER_ERROR !!",
@@ -212,8 +212,6 @@ exports.updateProfile = async (req, res) => {
       },
       { new: true }
     );
-    console.log(req.body.id);
-    console.log(update_);
     return res.status(StatusCodes.ACCEPTED).send({
       success: true,
       messgae: "Profile Update Sucessfully",

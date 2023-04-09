@@ -11,18 +11,7 @@ exports.appointmentAdd = async (req, res) => {
         message: "Unauthorized Access",
       });
     }
-    const {
-      title,
-      description,
-      status,
-      date,
-      time,
-      time_end,
-      doctor,
-      subspecialities,
-      uuid,
-    } = req.body;
-    console.log(req.body);
+    const { title, status, date, time, time_end, doctor, uuid } = req.body;
     const file = req?.files?.image;
     const result = await cloudinary?.uploader?.upload(
       file?.tempFilePath,
@@ -38,13 +27,12 @@ exports.appointmentAdd = async (req, res) => {
     var _appointment = await new appointmentModel({
       user: req.userInfo._id,
       title,
-      description,
       status,
       date,
       time,
       time_end,
       doctor,
-      subspecialities,
+      uuid,
       image: {
         public_id: result.public_id,
         url: result.secure_url,
@@ -90,13 +78,11 @@ exports.appointmentUpdate = async (req, res) => {
       { _id: req.params.id },
       {
         title: req?.body?.title,
-        description: req?.body?.description,
         status: req?.body?.status,
         date: req?.body?.date,
         time: req?.body?.time,
         time_end: req?.body?.time_end,
         doctor: req?.body?.doctor,
-        subspecialities: req?.body?.subspecialities,
         image: {
           public_id: result?.public_id,
           url: result?.secure_url,
