@@ -11,7 +11,8 @@ exports.appointmentAdd = async (req, res) => {
         message: "Unauthorized Access",
       });
     }
-    const { title, status, date, time, time_end, doctor, uuid } = req.body;
+    const { title, status, date, time, time_end, doctor, uuid, detail } =
+      req.body;
     const file = req?.files?.image;
     const result = await cloudinary?.uploader?.upload(
       file?.tempFilePath,
@@ -33,6 +34,7 @@ exports.appointmentAdd = async (req, res) => {
       time_end,
       doctor,
       uuid,
+      detail,
       image: {
         public_id: result.public_id,
         url: result.secure_url,
@@ -74,6 +76,7 @@ exports.appointmentUpdate = async (req, res) => {
         message: "Unauthorized Access",
       });
     }
+    console.log(req.body);
     var _appointmentUpdate = await appointmentModel.findOneAndUpdate(
       { _id: req.params.id },
       {
@@ -83,6 +86,7 @@ exports.appointmentUpdate = async (req, res) => {
         time: req?.body?.time,
         time_end: req?.body?.time_end,
         doctor: req?.body?.doctor,
+        detail: req?.body?.detail,
         image: {
           public_id: result?.public_id,
           url: result?.secure_url,
