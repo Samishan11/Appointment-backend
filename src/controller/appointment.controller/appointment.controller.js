@@ -76,7 +76,6 @@ exports.appointmentUpdate = async (req, res) => {
         message: "Unauthorized Access",
       });
     }
-    console.log(req.body);
     var _appointmentUpdate = await appointmentModel.findOneAndUpdate(
       { _id: req.params.id },
       {
