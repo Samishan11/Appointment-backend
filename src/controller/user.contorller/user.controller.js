@@ -169,10 +169,22 @@ exports.loginUser = async (req, res) => {
 
 // update user controller
 exports.updateUser = async (req, res) => {
+  console.log(req?.body?.isAdmin === "");
   try {
     var update_ = await userModel.findOneAndUpdate(
       { _id: req.params.id },
-      req?.body,
+      {
+        isAdmin: req?.body?.isAdmin === "" ? false : req?.body?.isAdmin,
+        isDoctor: req?.body?.isDoctor === "" ? false : req?.body?.isDoctor,
+        username: req?.body?.username,
+        email: req?.body?.email,
+        phone: req?.body?.phone,
+        address: req?.body?.address,
+        about: req?.body?.about,
+        specialities: req?.body?.specialities,
+        subspecialities: req?.body?.subspecialities,
+        password: req?.body?.password,
+      },
       { new: true }
     );
     return res.status(StatusCodes.ACCEPTED).send({
@@ -181,7 +193,7 @@ exports.updateUser = async (req, res) => {
       data: update_,
     });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       success: false,
       messgae: "INTERNAL_SERVER_ERROR !!",
