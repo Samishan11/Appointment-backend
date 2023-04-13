@@ -34,14 +34,15 @@ exports.booking = async (req, res) => {
 // appointment booking update
 exports.bookingUpdate = async (req, res) => {
   try {
-    const { appointment, booked_on } = req.body;
     var _update = await booking.findOneAndUpdate(
       { _id: req.params.id },
-      req?.body
+      req?.body,
+      { new: true }
     );
     return res.status(StatusCodes.OK).send({
       success: true,
       message: "Appointment has been updated",
+      data: _update,
     });
   } catch (error) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
