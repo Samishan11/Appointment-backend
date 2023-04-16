@@ -71,7 +71,7 @@ exports.bookingDelete = async (req, res) => {
 // appointment booking get
 exports.bookingGet = async (req, res) => {
   try {
-    var _get = await booking.find();
+    var _get = await booking.find().populate("appointment");
     return res.status(StatusCodes.OK).send({
       success: true,
       data: _get,

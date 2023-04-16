@@ -152,9 +152,11 @@ exports.appointmentGet = async (req, res) => {
 // single appointment get contrller
 exports.appointmentSingleGet = async (req, res) => {
   try {
-    var _appointmentGet = await appointmentModel.findOne({
-      _id: req.params.id,
-    });
+    var _appointmentGet = await appointmentModel
+      .findOne({
+        _id: req.params.id,
+      })
+      .populate("doctor");
     return res.status(StatusCodes.OK).send({
       success: true,
       data: _appointmentGet,

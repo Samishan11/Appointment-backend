@@ -8,10 +8,11 @@ const appointmentModel = new mongoose.Schema({
   title: {
     type: String,
   },
-  detail: {
-    type: String,
-  },
   doctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+  },
+  detail: {
     type: String,
   },
   uuid: {
