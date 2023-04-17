@@ -27,7 +27,7 @@ exports.booking = async (req, res) => {
           _appointment?.title
         }.</p>
         <p style="font-size:12px;">The appointment is scheduled for Date:${new Date(
-          appointment.date
+          appointment?.date
         ).toDateString()}.</p>
         <p style="font-size:12px;">Thank you for booking with us.<</p>
         `,
