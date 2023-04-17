@@ -12,7 +12,7 @@ exports.zoomLink = async (req, res) => {
   try {
     const payload = {
       iss: ZOOM_API_KEY,
-      exp: new Date().getTime() + 60 * 60 * 1000,
+      exp: new Date().getTime() + 60 * 60 * 1000, // Token expires in 1 hour
     };
     const token = jwt.sign(payload, ZOOM_API_SECRET);
 
@@ -46,12 +46,10 @@ exports.zoomLink = async (req, res) => {
         from: process.env.HOST,
         to: email,
         subject: "Appointment Meeting Link",
-        html: ` 
-        <p style="font-size:16px; font-weight:bolder">Dear ${booking_.username}</p>
+        html: `
         <p style="font-size:12px;">The meeling link is here ${meetingLink}</p>
         <p style="font-size:12px;">Hope you will be there on time.</p>
-        <p style="font-size:12px;">Thank You</p>
-         `,
+        <p style="font-size:12px;">Thank You</p>`,
       });
     }
     res.status(StatusCodes.CREATED).send({ data: meetingLink, success: true });
