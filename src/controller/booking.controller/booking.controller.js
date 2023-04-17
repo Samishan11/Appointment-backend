@@ -22,7 +22,7 @@ exports.booking = async (req, res) => {
         to: email,
         subject: "Appointment Booking",
         html: ` 
-        <p style="font-weight:bold,font-size:16px">${username}</p>
+        <p style="font-weight:bold,font-size:16px">Dear ${username}</p>
         <p style="font-size:12px">We have received your appointment booking for ${
           _appointment?.title
         }.</p>
