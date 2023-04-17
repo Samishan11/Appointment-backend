@@ -12,7 +12,7 @@ exports.zoomLink = async (req, res) => {
   try {
     const payload = {
       iss: ZOOM_API_KEY,
-      exp: new Date().getTime() + 60 * 60 * 1000, // Token expires in 1 hour
+      exp: new Date().getTime() + 60 * 60 * 1000,
     };
     const token = jwt.sign(payload, ZOOM_API_SECRET);
 
