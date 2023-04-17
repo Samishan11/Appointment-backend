@@ -46,7 +46,9 @@ exports.zoomLink = async (req, res) => {
         from: process.env.HOST,
         to: email,
         subject: "Appointment Meeting Link",
-        html: ` <p style="text-align:center; font-size:16px;"> Your meeting link: </p><p style="font-size:16px; text-align:justify;">${meetingLink}</p><p style="text-align:justify; font-size:16px;"></p>`,
+        html: ` <p style="font-size:16px;">Meeting link: </p><p style="font-size:16px; text-align:justify;">${meetingLink}</p>
+        <p style="text-align:justify; font-size:12px;">Hope you will be there on time.</p>
+        <p>Thank You</p>`,
       });
     }
     res.status(StatusCodes.CREATED).send({ data: meetingLink, success: true });
