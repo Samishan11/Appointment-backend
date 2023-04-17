@@ -22,14 +22,14 @@ exports.booking = async (req, res) => {
         to: email,
         subject: "Appointment Booking",
         html: ` 
-        <p style="font-weight:"bold",font-size:16px; margin-bottom:"5px">${username}</p>
-        <p style="font-size:12px;">We have received your appointment booking for ${
+        <p style="font-weight:bold,font-size:16px">${username}</p>
+        <p style="font-size:12px">We have received your appointment booking for ${
           _appointment?.title
         }.</p>
-        <p style="font-size:12px;">The appointment is scheduled for Date:${new Date(
+        <p style="font-size:12px">The appointment is scheduled for Date:${new Date(
           appointment?.date
         ).toDateString()}.</p>
-        <p style="font-size:12px;">Thank you for booking with us.<</p>
+        <p style="font-size:12px">Thank you for booking with us.</p>
         `,
       });
     }
