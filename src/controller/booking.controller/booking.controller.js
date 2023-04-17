@@ -1,22 +1,38 @@
 const booking = require("../../models/booking.model");
 const { StatusCodes } = require("http-status-codes");
 const appointmentModel = require("../../models/appointment.model");
+const { mail } = require("../../utils/mail");
+
 // appointment booking
 exports.booking = async (req, res) => {
   try {
     const { appointment, username, email, booked_on } = req.body;
     const _appointment = await appointmentModel.findOne({ _id: appointment });
     console.log(_appointment);
-    console.log(req.body);
-    console.log(req.body);
     const _booking = await new booking({
       appointment,
       booked_on: new Date(),
       username,
       email,
     });
-
     await _booking.save();
+    if (_booking) {
+      mail().sendMail({
+        from: process.env.HOST,
+        to: email,
+        subject: "Appointment Booking",
+        html: ` 
+        <p style="font-weight:"bold",font-size:16px; margin-bottom:"5px">${username}</p>
+        <p style="font-size:12px;">We have received your appointment booking for ${
+          _appointment?.title
+        }.</p>
+        <p style="font-size:12px;">The appointment is scheduled for Date:${new Date(
+          appointment.date
+        ).toDateString()}.</p>
+        <p style="font-size:12px;">Thank you for booking with us.<</p>
+        `,
+      });
+    }
     return res.status(StatusCodes.OK).send({
       success: true,
       message: "Appointment has been booked",
